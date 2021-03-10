@@ -1,24 +1,15 @@
-#[derive(Debug)]
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub struct Clock {
     hours: i32,
     minutes: i32,
 }
 
 impl Clock {
-
-    pub fn new(h: i32, m: i32) -> Self {
-        let rollover = m / 60;
-        let mut hours = (h + rollover) % 24;
-        let mut minutes = m % 60;
-        if minutes < 0 {
-            hours -= 1;
-            minutes += 60;
+    pub fn new(hours: i32, minutes: i32) -> Self {
+        Clock {
+            hours: (((hours + (minutes / 60)) % 24) - (minutes % 60 < 0) as i32 + 24) % 24,
+            minutes: ((minutes % 60) + 60) % 60,
         }
-        if hours < 0 {
-            hours += 24;
-        }
-        Clock{ hours, minutes }
     }
 
     pub fn add_minutes(&self, minutes: i32) -> Self {
@@ -27,7 +18,6 @@ impl Clock {
 }
 
 impl ToString for Clock {
-
     fn to_string(&self) -> String {
         format!("{:02}:{:02}", self.hours, self.minutes)
     }
